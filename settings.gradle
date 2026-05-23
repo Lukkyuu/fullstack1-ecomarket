@@ -1,1 +1,3 @@
 rootProject.name = 'ecomarket'
+include 'inventory-service'
+include 'order-service'
