@@ -23,7 +23,7 @@ graph TD
         direction LR
         UserService[user-service :8081]
         AuthService[auth-service :8082]
-        InventoryService[inventory-service :8083]
+        InventoryService[inventory-service :8093]
         OrderService[order-service :8084]
         StoreService[store-service :8085]
         ShippingService[shipping-service :8086]
@@ -58,7 +58,7 @@ graph TD
 2. **`auth-service` (Puerto: `8082`)**
    * **Responsabilidad:** Administración de permisos y privilegios por rol.
    * **Base de Datos:** H2 (`authdb`).
-3. **`inventory-service` (Puerto: `8083`)**
+3. **`inventory-service` (Puerto: `8093`)**
    * **Responsabilidad:** Catálogo de productos sostenibles y control de stock.
    * **Base de Datos:** H2 (`inventorydb`).
 4. **`order-service` (Puerto: `8084`)**
@@ -153,6 +153,6 @@ Abra una consola de comandos en la raíz del proyecto y ejecute los siguientes p
 ## 🧪 Pruebas de Integración con Postman
 
 En la raíz del proyecto se encuentra el archivo **`EcoMarket.postman_collection.json`**. Puede importarlo en Postman para probar el flujo completo:
-1. **Crear Orden exitosa:** Envía un POST a `http://localhost:8084/api/orders` con un cupón activo (`BIENVENIDA20`). La orden se procesa, reduce stock en `inventory-service` (puerto `8083`), valida el porcentaje de descuento en `coupon-service` (puerto `8090`) y emite una factura en `billing-service` (puerto `8088`).
+1. **Crear Orden exitosa:** Envía un POST a `http://localhost:8084/api/orders` con un cupón activo (`BIENVENIDA20`). La orden se procesa, reduce stock en `inventory-service` (puerto `8093`), valida el porcentaje de descuento en `coupon-service` (puerto `8090`) y emite una factura en `billing-service` (puerto `8088`).
 2. **Consultar Factura:** Envía un GET a `http://localhost:8088/api/invoices` para comprobar que la factura fue creada exitosamente con el IVA calculado.
 3. **Intentar Orden sin Stock:** Envía un POST solicitando una cantidad imposible de stock, validando el retorno del error y los logs en consola.
