@@ -1,21 +1,21 @@
 {
 	"info": {
 		"_postman_id": "893c5d6e-9821-4f1a-b333-dc0c5d5ab86e",
-		"name": "EcoMarket SPA Integration",
-		"description": "Colección de endpoints para probar la integración de microservicios de EcoMarket SPA.",
+		"name": "EcoMarket SPA 10 Microservices",
+		"description": "Colección de endpoints para probar los 10 microservicios de EcoMarket SPA.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Inventory Service (8081)",
+			"name": "1. User Service (8081)",
 			"item": [
 				{
-					"name": "List Categories",
+					"name": "List Users",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/categories",
+							"raw": "http://localhost:8081/api/users",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -23,35 +23,14 @@
 							"port": "8081",
 							"path": [
 								"api",
-								"categories"
+								"users"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Category by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/api/categories/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"api",
-								"categories",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Category",
+					"name": "Create User",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -62,10 +41,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Packaging Ecológico\",\n    \"description\": \"Cajas, cintas y envoltorios 100% compostables.\"\n}"
+							"raw": "{\n    \"name\": \"Carlos Rojas\",\n    \"email\": \"carlos.rojas@ecomarket.cl\",\n    \"roleName\": \"SALES_EMPLOYEE\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/categories",
+							"raw": "http://localhost:8081/api/users",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -73,24 +52,56 @@
 							"port": "8081",
 							"path": [
 								"api",
-								"categories"
+								"users"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "2. Auth Service (8082)",
+			"item": [
+				{
+					"name": "Get Permissions by Role",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8082/api/auth/permissions/STORE_MANAGER",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"auth",
+								"permissions",
+								"STORE_MANAGER"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Inventory Service (8083)",
+			"item": [
 				{
 					"name": "List Products",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/products",
+							"raw": "http://localhost:8083/api/products",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8081",
+							"port": "8083",
 							"path": [
 								"api",
 								"products"
@@ -105,12 +116,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/products/1",
+							"raw": "http://localhost:8083/api/products/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8081",
+							"port": "8083",
 							"path": [
 								"api",
 								"products",
@@ -119,38 +130,34 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "4. Order Service (8084)",
+			"item": [
 				{
-					"name": "Create Product",
+					"name": "List Orders",
 					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Caja de Cartón Reciclado L\",\n    \"description\": \"Caja de cartón ultra resistente 100% reciclada.\",\n    \"price\": 1200.00,\n    \"stock\": 100,\n    \"categoryId\": 4\n}"
-						},
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/products",
+							"raw": "http://localhost:8084/api/orders",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8081",
+							"port": "8084",
 							"path": [
 								"api",
-								"products"
+								"orders"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create Product - Validation Error",
+					"name": "Create Order - Success (with Coupon)",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -161,18 +168,47 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"\",\n    \"description\": \"Producto sin nombre, precio negativo y stock negativo.\",\n    \"price\": -500.00,\n    \"stock\": -5,\n    \"categoryId\": 1\n}"
+							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"couponCode\": \"BIENVENIDA20\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 2\n        },\n        {\n            \"productId\": 3,\n            \"quantity\": 1\n        }\n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/products",
+							"raw": "http://localhost:8084/api/orders",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8081",
+							"port": "8084",
 							"path": [
 								"api",
-								"products"
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order - Stock Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 500\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8084/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8084",
+							"path": [
+								"api",
+								"orders"
 							]
 						}
 					},
@@ -181,131 +217,201 @@
 			]
 		},
 		{
-			"name": "Order Service (8082)",
+			"name": "5. Store Service (8085)",
 			"item": [
 				{
-					"name": "List Orders",
+					"name": "List Stores",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8082/api/orders",
+							"raw": "http://localhost:8085/api/stores",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8082",
+							"port": "8085",
 							"path": [
 								"api",
-								"orders"
+								"stores"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Shipping Service (8086)",
+			"item": [
+				{
+					"name": "List Shipments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8086/api/shipments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8086",
+							"path": [
+								"api",
+								"shipments"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Order by ID",
+					"name": "Create Shipment",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderId\": 1,\n    \"deliveryAddress\": \"Av. Alemania 1200, Valdivia\"\n}"
+						},
 						"url": {
-							"raw": "http://localhost:8082/api/orders/1",
+							"raw": "http://localhost:8086/api/shipments",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8082",
+							"port": "8086",
 							"path": [
 								"api",
-								"orders",
+								"shipments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Supplier Service (8087)",
+			"item": [
+				{
+					"name": "List Suppliers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8087/api/suppliers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8087",
+							"path": [
+								"api",
+								"suppliers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Billing Service (8088)",
+			"item": [
+				{
+					"name": "List Invoices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/api/invoices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"api",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Review Service (8089)",
+			"item": [
+				{
+					"name": "List Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8089/api/reviews",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8089",
+							"path": [
+								"api",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Reviews by Product ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8089/api/reviews/product/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8089",
+							"path": [
+								"api",
+								"reviews",
+								"product",
 								"1"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "10. Coupon Service (8090)",
+			"item": [
 				{
-					"name": "Create Order - Success",
+					"name": "Validate Coupon Code",
 					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 5\n        },\n        {\n            \"productId\": 3,\n            \"quantity\": 2\n        }\n    ]\n}"
-						},
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "http://localhost:8082/api/orders",
+							"raw": "http://localhost:8090/api/coupons/validate/BIENVENIDA20",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8082",
+							"port": "8090",
 							"path": [
 								"api",
-								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Order - Insufficient Stock Error",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 1000\n        }\n    ]\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8082/api/orders",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"api",
-								"orders"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Order - Input Validation Error",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"customerName\": \"\",\n    \"customerEmail\": \"correo-invalido\",\n    \"shippingAddress\": \"\",\n    \"items\": []\n}"
-						},
-						"url": {
-							"raw": "http://localhost:8082/api/orders",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8082",
-							"path": [
-								"api",
-								"orders"
+								"coupons",
+								"validate",
+								"BIENVENIDA20"
 							]
 						}
 					},
