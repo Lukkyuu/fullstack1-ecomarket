@@ -88,7 +88,7 @@
 			]
 		},
 		{
-			"name": "3. Inventory Service (8083)",
+			"name": "3. Inventory Service (8093)",
 			"item": [
 				{
 					"name": "List Products",
@@ -96,12 +96,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8083/api/products",
+							"raw": "http://localhost:8093/api/products",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8083",
+							"port": "8093",
 							"path": [
 								"api",
 								"products"
@@ -116,12 +116,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8083/api/products/1",
+							"raw": "http://localhost:8093/api/products/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8083",
+							"port": "8093",
 							"path": [
 								"api",
 								"products",
