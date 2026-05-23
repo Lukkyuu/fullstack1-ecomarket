@@ -7,7 +7,6 @@ CREATE TABLE orders (
     order_date TIMESTAMP NOT NULL,
     total_amount DECIMAL(19, 2) NOT NULL
 );
-
 CREATE TABLE order_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,

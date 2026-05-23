@@ -1,6 +1,6 @@
-# Transformación Digital de EcoMarket SPA - Microservicios
+# Transformación Digital de EcoMarket SPA - Arquitectura de 10 Microservicios
 
-Este proyecto representa la arquitectura de microservicios desarrollada para la transformación digital de **EcoMarket SPA**, una empresa chilena dedicada a la venta de productos ecológicos y sostenibles. La solución aborda los problemas de rendimiento y disponibilidad de la antigua aplicación monolítica mediante la separación de responsabilidades y la comunicación eficiente entre componentes independientes.
+Este proyecto representa la arquitectura de microservicios desarrollada para la transformación digital de **EcoMarket SPA**, una empresa chilena dedicada a la venta de productos ecológicos y sostenibles. La solución aborda los problemas de rendimiento y disponibilidad de la antigua aplicación monolítica mediante la separación de responsabilidades en **10 microservicios independientes**.
 
 ---
 
@@ -9,62 +9,79 @@ Este proyecto representa la arquitectura de microservicios desarrollada para la 
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ Arquitectura del Sistema (10 Microservicios)
 
-El sistema se diseñó bajo una arquitectura de microservicios estructurada en un proyecto multi-módulo de Gradle:
+El sistema se compone de 10 servicios desacoplados que cooperan a través de comunicación REST con **WebClient**:
 
 ```mermaid
 graph TD
-    subgraph "Clientes & Consumidores"
+    subgraph "Clientes"
         Postman[Postman / REST Clients]
     end
 
     subgraph "Microservicios (Puertos)"
         direction LR
-        InventoryService[inventory-service :8081]
-        OrderService[order-service :8082]
+        UserService[user-service :8081]
+        AuthService[auth-service :8082]
+        InventoryService[inventory-service :8083]
+        OrderService[order-service :8084]
+        StoreService[store-service :8085]
+        ShippingService[shipping-service :8086]
+        SupplierService[supplier-service :8087]
+        BillingService[billing-service :8088]
+        ReviewService[review-service :8089]
+        CouponService[coupon-service :8090]
     end
 
-    subgraph "Persistencia (H2 en memoria)"
-        DB_Inv[(inventorydb)]
-        DB_Ord[(orderdb)]
-    end
+    Postman -->|Consultar/Crear| UserService
+    Postman -->|Consultar Permisos| AuthService
+    Postman -->|CRUD Productos| InventoryService
+    Postman -->|Registrar Ventas| OrderService
+    Postman -->|Gestionar Tiendas| StoreService
+    Postman -->|Registrar Envíos| ShippingService
+    Postman -->|Gestionar Proveedores| SupplierService
+    Postman -->|Listar Facturas| BillingService
+    Postman -->|Dejar Reseñas| ReviewService
+    Postman -->|Validar Cupones| CouponService
 
-    Postman -->|CRUD Categories & Products| InventoryService
-    Postman -->|Place & Query Orders| OrderService
-    OrderService -->|WebClient: Valida Stock & Precio| InventoryService
+    OrderService -->|WebClient: Valida Stock| InventoryService
     OrderService -->|WebClient: Reduce Stock| InventoryService
-
-    InventoryService --> DB_Inv
-    OrderService --> DB_Ord
+    OrderService -->|WebClient: Valida Cupón| CouponService
+    OrderService -->|WebClient: Genera Factura| BillingService
 ```
 
-### 1. `inventory-service` (Puerto: `8081`)
-* **Responsabilidad:** Gestión de categorías y catálogo de productos ecológicos.
-* **Base de Datos:** H2 en memoria (`inventorydb`).
-* **Migración:** Inicialización con Flyway a través de scripts de migración (`V1__initial_schema.sql` y `V2__insert_sample_data.sql`).
-* **Relaciones JPA:** Relación `@OneToMany` (Category -> Products) y `@ManyToOne` (Product -> Category).
+### Detalle de los 10 Microservicios:
 
-### 2. `order-service` (Puerto: `8082`)
-* **Responsabilidad:** Procesamiento y registro de compras/órdenes de venta.
-* **Base de Datos:** H2 en memoria (`orderdb`).
-* **Migración:** Inicialización con Flyway (`V1__initial_schema.sql`).
-* **Comunicación Externa:** Consume el endpoint de `inventory-service` vía **WebClient** con control de timeouts (5 segundos), mapeo de códigos HTTP y re-lanzamiento estructurado de excepciones.
-* **Relaciones JPA:** Relación `@OneToMany` (Order -> OrderItems) y `@ManyToOne` (OrderItem -> Order).
-
----
-
-## 🚀 Requisitos y Configuración de Base de Datos
-
-El proyecto está configurado para ejecutarse localmente de forma inmediata:
-* **Base de datos por defecto:** H2 en memoria para evitar requerir bases de datos locales complejas al docente.
-* **Soporte PostgreSQL:** Las dependencias del driver PostgreSQL están incluidas en el `build.gradle` raíz. Para cambiar a una persistencia real en PostgreSQL, configure los detalles en los archivos `application.properties` correspondientes:
-  ```properties
-  spring.datasource.url=jdbc:postgresql://localhost:5432/ecomarket_db
-  spring.datasource.username=postgres
-  spring.datasource.password=su_contraseña
-  spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-  ```
+1. **`user-service` (Puerto: `8081`)**
+   * **Responsabilidad:** Gestión de cuentas de usuario y perfiles del sistema (Administrador, Gerente, Empleado, Cliente).
+   * **Base de Datos:** H2 (`userdb`).
+2. **`auth-service` (Puerto: `8082`)**
+   * **Responsabilidad:** Administración de permisos y privilegios por rol.
+   * **Base de Datos:** H2 (`authdb`).
+3. **`inventory-service` (Puerto: `8083`)**
+   * **Responsabilidad:** Catálogo de productos sostenibles y control de stock.
+   * **Base de Datos:** H2 (`inventorydb`).
+4. **`order-service` (Puerto: `8084`)**
+   * **Responsabilidad:** Procesamiento de compras y transacciones. Consume `inventory-service` para stock, `coupon-service` para descuentos y `billing-service` para emitir facturas.
+   * **Base de Datos:** H2 (`orderdb`).
+5. **`store-service` (Puerto: `8085`)**
+   * **Responsabilidad:** Administración de las sucursales físicas (Santiago, Valdivia, Antofagasta).
+   * **Base de Datos:** H2 (`storedb`).
+6. **`shipping-service` (Puerto: `8086`)**
+   * **Responsabilidad:** Despachos y logística de entrega.
+   * **Base de Datos:** H2 (`shippingdb`).
+7. **`supplier-service` (Puerto: `8087`)**
+   * **Responsabilidad:** Directorio y abastecimiento de proveedores ecológicos.
+   * **Base de Datos:** H2 (`supplierdb`).
+8. **`billing-service` (Puerto: `8088`)**
+   * **Responsabilidad:** Generación de facturas electrónicas (con cálculo automático de IVA).
+   * **Base de Datos:** H2 (`billingdb`).
+9. **`review-service` (Puerto: `8089`)**
+   * **Responsabilidad:** Calificaciones y comentarios de productos por clientes.
+   * **Base de Datos:** H2 (`reviewdb`).
+10. **`coupon-service` (Puerto: `8090`)**
+    * **Responsabilidad:** Administración y validación de códigos de descuento promocionales.
+    * **Base de Datos:** H2 (`coupondb`).
 
 ---
 
@@ -72,33 +89,25 @@ El proyecto está configurado para ejecutarse localmente de forma inmediata:
 
 1. **Persistencia JPA + Hibernate:** Implementación de entidades de dominio anotadas con definición estricta de PKs, FKs e integridad referencial.
 2. **Patrón CSR (Controller-Service-Repository):** Separación rigurosa de responsabilidades.
-3. **Bean Validation (JSR 380):** Validaciones en controladores sobre DTOs (`@NotBlank`, `@Email`, `@Positive`, `@Min`, `@NotEmpty`, `@Valid`) retornando respuestas consistentes.
-4. **Manejo Centralizado de Excepciones (@ControllerAdvice):** Manejo de excepciones locales y externas con respuestas en JSON estructurado (`ErrorResponse`) y HTTP status correctos.
-5. **Logs estructurados con SLF4J:** Trazabilidad en consola en todas las capas del sistema ante operaciones CRUD, creación de órdenes y errores.
-6. **Módulo de Pruebas e Integración:** Colección de Postman exportada en la raíz del proyecto.
+3. **Bean Validation (JSR 380):** Validaciones en controladores sobre DTOs (`@NotBlank`, `@Email`, `@Positive`, `@Min`, `@NotEmpty`, `@Valid`) retornando respuestas de error estructuradas.
+4. **Manejo Centralizado de Excepciones (@ControllerAdvice):** Captura de excepciones con respuestas en JSON estructurado (`ErrorResponse`) y HTTP status correctos.
+5. **Logs estructurados con SLF4J:** Trazabilidad en consola ante creación de datos, reducción de stock, emisión de facturas y validaciones fallidas.
+6. **Migración de Base de Datos con Flyway:** Cada microservicio inicializa su propia base de datos H2 en memoria de manera automática mediante scripts SQL ordenados (`V1__initial_schema.sql` y `V2__insert_sample_data.sql`).
 
 ---
 
-## 📋 Endpoints Disponibles
+## 📋 Endpoints Principales
 
-### Microservicio de Inventario (`inventory-service`)
-* `GET /api/categories` - Obtener todas las categorías.
-* `GET /api/categories/{id}` - Obtener categoría por ID.
-* `POST /api/categories` - Crear nueva categoría.
-* `PUT /api/categories/{id}` - Actualizar categoría existente.
-* `DELETE /api/categories/{id}` - Eliminar categoría.
-* `GET /api/products` - Obtener todos los productos.
-* `GET /api/products/{id}` - Obtener producto por ID.
-* `GET /api/products/category/{categoryId}` - Obtener productos de una categoría.
-* `POST /api/products` - Crear nuevo producto.
-* `PUT /api/products/{id}` - Actualizar producto.
-* `DELETE /api/products/{id}` - Eliminar producto.
-* `PUT /api/products/reduce-stock` - Endpoint interno para reducir el stock (consumido por `order-service`).
-
-### Microservicio de Órdenes (`order-service`)
-* `GET /api/orders` - Listar todas las órdenes procesadas.
-* `GET /api/orders/{id}` - Obtener detalles de una orden por ID.
-* `POST /api/orders` - Crear una nueva orden (valida stock y reduce cantidad en inventario en tiempo real).
+* **User Service:** `GET /api/users` | `POST /api/users`
+* **Auth Service:** `GET /api/auth/permissions/{roleName}`
+* **Inventory Service:** `GET /api/products` | `PUT /api/products/reduce-stock`
+* **Order Service:** `GET /api/orders` | `POST /api/orders`
+* **Store Service:** `GET /api/stores` | `POST /api/stores`
+* **Shipping Service:** `GET /api/shipments` | `POST /api/shipments`
+* **Supplier Service:** `GET /api/suppliers` | `POST /api/suppliers`
+* **Billing Service:** `GET /api/invoices` | `POST /api/invoices`
+* **Review Service:** `GET /api/reviews` | `GET /api/reviews/product/{productId}`
+* **Coupon Service:** `GET /api/coupons/validate/{code}`
 
 ---
 
@@ -108,31 +117,21 @@ Abra una consola de comandos en la raíz del proyecto y ejecute los siguientes p
 
 ### 1. Compilar y Construir el Proyecto
 ```powershell
-./gradlew build
+./gradlew build -x test
 ```
 
-### 2. Iniciar el Microservicio de Inventario (`inventory-service`)
+### 2. Ejecutar un Microservicio Específico (Ejemplo: `inventory-service`)
 ```powershell
 ./gradlew :inventory-service:bootRun
 ```
-*El servicio iniciará en el puerto `8081`.*
-*Puede acceder a la consola H2 en: `http://localhost:8081/h2-console` (JDBC URL: `jdbc:h2:mem:inventorydb`).*
 
-### 3. Iniciar el Microservicio de Órdenes (`order-service`)
-```powershell
-./gradlew :order-service:bootRun
-```
-*El servicio iniciará en el puerto `8082`.*
-*Puede acceder a la consola H2 en: `http://localhost:8082/h2-console` (JDBC URL: `jdbc:h2:mem:orderdb`).*
+*Puede ejecutar cada uno de los 10 servicios de forma similar reemplazando el nombre del submódulo (ej: `:order-service`, `:user-service`, etc.).*
 
 ---
 
 ## 🧪 Pruebas de Integración con Postman
 
 En la raíz del proyecto se encuentra el archivo **`EcoMarket.postman_collection.json`**. Puede importarlo en Postman para probar el flujo completo:
-1. Crear categorías y productos.
-2. Listar productos y verificar el stock inicial (ej: `Product ID: 1` con stock `50`).
-3. Registrar una orden de compra en `order-service` para el `Product ID: 1` con cantidad `5`.
-4. Verificar que la orden se creó correctamente en el puerto `8082` con estado `CONFIRMED`.
-5. Consultar el producto en el puerto `8081` y observar que el stock se redujo automáticamente a `45`.
-6. Intentar registrar otra orden solicitando una cantidad superior al stock disponible (ej: `50`) y comprobar la respuesta de error estructurado con código `400 Bad Request` y los logs del sistema.
+1. **Crear Orden exitosa:** Envía un POST a `http://localhost:8082/api/orders` con un cupón activo (`BIENVENIDA20`). La orden se procesa, reduce stock en `inventory-service`, valida el porcentaje de descuento en `coupon-service` y emite una factura en `billing-service`.
+2. **Consultar Factura:** Envía un GET a `http://localhost:8088/api/invoices` para comprobar que la factura fue creada exitosamente con el IVA calculado.
+3. **Intentar Orden sin Stock:** Envía un POST solicitando una cantidad imposible de stock, validando el retorno del error y los logs en consola.

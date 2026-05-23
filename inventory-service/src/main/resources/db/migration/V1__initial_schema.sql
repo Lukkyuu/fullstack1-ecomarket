@@ -3,7 +3,6 @@ CREATE TABLE categories (
     name VARCHAR(100) NOT NULL UNIQUE,
     description VARCHAR(255)
 );
-
 CREATE TABLE products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
