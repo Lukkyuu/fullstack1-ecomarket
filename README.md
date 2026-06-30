@@ -98,7 +98,8 @@ graph TD
 5. **Logs estructurados con SLF4J:** Trazabilidad en consola ante creación de datos, reducción de stock, emisión de facturas y validaciones fallidas.
 6. **Migración de Base de Datos con Flyway:** Cada microservicio inicializa su propia base de datos H2 en memoria de manera automática mediante scripts SQL ordenados (`V1__initial_schema.sql` y `V2__insert_sample_data.sql`).
 7. **Documentación Swagger / OpenAPI:** Se integró `springdoc-openapi-starter-webmvc-ui` y `@Operation` para explorar endpoints. Interfaz UI en `http://localhost:<puerto_microservicio>/swagger-ui.html`.
-8. **Pruebas Unitarias con JUnit y Mockito:** Cobertura de pruebas (target 80%) para la capa de servicios y controladores (ej. `OrderControllerTest`), garantizando calidad y robustez con estructura Given-When-Then.
+8. **Pruebas Unitarias con JUnit y Mockito:** Cobertura de pruebas (target 80%) para la capa de controladores en TODOS los microservicios usando `@InjectMocks` y `@Mock`, garantizando calidad y robustez con estructura Given-When-Then.
+9. **Configuración en YAML:** Todos los microservicios (incluyendo el API Gateway) centralizan sus configuraciones en formato `.yml` (application.yml) en lugar de `.properties`, promoviendo una estructura jerárquica más legible.
 
 ---
 
@@ -133,7 +134,7 @@ Por defecto, los microservicios se ejecutan usando la base de datos **H2 en memo
    * `ecomarket_billing`
    * `ecomarket_review`
    * `ecomarket_coupon`
-3. En cada microservicio, acceda a su archivo `src/main/resources/application.properties`, comente las líneas de H2 y descomente las líneas del bloque **CONFIGURACIÓN PARA MYSQL / XAMPP**.
+3. En cada microservicio, acceda a su archivo `src/main/resources/application.yml`, comente las líneas de H2 y configure su conexión a MySQL según la nomenclatura YAML.
 4. Al arrancar cada microservicio, **Flyway** detectará la base de datos de XAMPP y creará los esquemas e insertará los datos iniciales automáticamente.
 
 ---
