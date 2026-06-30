@@ -9,9 +9,9 @@ Este proyecto representa la arquitectura de microservicios desarrollada para la 
 
 ---
 
-## 🏗️ Arquitectura del Sistema (10 Microservicios)
+## 🏗️ Arquitectura del Sistema (11 Microservicios)
 
-El sistema se compone de 10 servicios desacoplados que cooperan a través de comunicación REST con **WebClient**:
+El sistema se compone de 10 servicios de dominio desacoplados y un **API Gateway** central, que cooperan a través de comunicación REST con **WebClient**:
 
 ```mermaid
 graph TD
@@ -21,6 +21,7 @@ graph TD
 
     subgraph "Microservicios (Puertos)"
         direction LR
+        ApiGateway[gateway-service :8080]
         UserService[user-service :8081]
         AuthService[auth-service :8082]
         InventoryService[inventory-service :8093]
@@ -33,16 +34,17 @@ graph TD
         CouponService[coupon-service :8090]
     end
 
-    Postman -->|Consultar/Crear| UserService
-    Postman -->|Consultar Permisos| AuthService
-    Postman -->|CRUD Productos| InventoryService
-    Postman -->|Registrar Ventas| OrderService
-    Postman -->|Gestionar Tiendas| StoreService
-    Postman -->|Registrar Envíos| ShippingService
-    Postman -->|Gestionar Proveedores| SupplierService
-    Postman -->|Listar Facturas| BillingService
-    Postman -->|Dejar Reseñas| ReviewService
-    Postman -->|Validar Cupones| CouponService
+    Postman -->|Gateway HTTP| ApiGateway
+    ApiGateway -->|Ruteo Dinámico| UserService
+    ApiGateway -->|Ruteo Dinámico| AuthService
+    ApiGateway -->|Ruteo Dinámico| InventoryService
+    ApiGateway -->|Ruteo Dinámico| OrderService
+    ApiGateway -->|Ruteo Dinámico| StoreService
+    ApiGateway -->|Ruteo Dinámico| ShippingService
+    ApiGateway -->|Ruteo Dinámico| SupplierService
+    ApiGateway -->|Ruteo Dinámico| BillingService
+    ApiGateway -->|Ruteo Dinámico| ReviewService
+    ApiGateway -->|Ruteo Dinámico| CouponService
 
     OrderService -->|WebClient: Valida Stock| InventoryService
     OrderService -->|WebClient: Reduce Stock| InventoryService
@@ -50,8 +52,10 @@ graph TD
     OrderService -->|WebClient: Genera Factura| BillingService
 ```
 
-### Detalle de los 10 Microservicios:
+### Detalle de los Microservicios:
 
+0. **`gateway-service` (Puerto: `8080`)**
+   * **Responsabilidad:** API Gateway construido con **Spring Cloud Gateway**. Centraliza todas las rutas y provee un punto único de entrada para el frontend/clientes. Las rutas se configuran vía `application.yml`.
 1. **`user-service` (Puerto: `8081`)**
    * **Responsabilidad:** Gestión de cuentas de usuario y perfiles del sistema (Administrador, Gerente, Empleado, Cliente).
    * **Base de Datos:** H2 (`userdb`).
@@ -93,6 +97,8 @@ graph TD
 4. **Manejo Centralizado de Excepciones (@ControllerAdvice):** Captura de excepciones con respuestas en JSON estructurado (`ErrorResponse`) y HTTP status correctos.
 5. **Logs estructurados con SLF4J:** Trazabilidad en consola ante creación de datos, reducción de stock, emisión de facturas y validaciones fallidas.
 6. **Migración de Base de Datos con Flyway:** Cada microservicio inicializa su propia base de datos H2 en memoria de manera automática mediante scripts SQL ordenados (`V1__initial_schema.sql` y `V2__insert_sample_data.sql`).
+7. **Documentación Swagger / OpenAPI:** Se integró `springdoc-openapi-starter-webmvc-ui` y `@Operation` para explorar endpoints. Interfaz UI en `http://localhost:<puerto_microservicio>/swagger-ui.html`.
+8. **Pruebas Unitarias con JUnit y Mockito:** Cobertura de pruebas (target 80%) para la capa de servicios y controladores (ej. `OrderControllerTest`), garantizando calidad y robustez con estructura Given-When-Then.
 
 ---
 
