@@ -8,43 +8,43 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: http://localhost:8081
+          uri: ${USER_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/users/**
         - id: auth-service
-          uri: http://localhost:8082
+          uri: ${AUTH_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/auth/**
         - id: inventory-service
-          uri: http://localhost:8083
+          uri: ${INVENTORY_SERVICE_URL:http://localhost:8083}
           predicates:
             - Path=/inventory/**
         - id: order-service
-          uri: http://localhost:8084
+          uri: ${ORDER_SERVICE_URL:http://localhost:8084}
           predicates:
             - Path=/orders/**
         - id: store-service
-          uri: http://localhost:8085
+          uri: ${STORE_SERVICE_URL:http://localhost:8085}
           predicates:
             - Path=/stores/**
         - id: shipping-service
-          uri: http://localhost:8086
+          uri: ${SHIPPING_SERVICE_URL:http://localhost:8086}
           predicates:
             - Path=/shipping/**
         - id: supplier-service
-          uri: http://localhost:8087
+          uri: ${SUPPLIER_SERVICE_URL:http://localhost:8087}
           predicates:
             - Path=/suppliers/**
         - id: billing-service
-          uri: http://localhost:8088
+          uri: ${BILLING_SERVICE_URL:http://localhost:8088}
           predicates:
             - Path=/billing/**
         - id: review-service
-          uri: http://localhost:8089
+          uri: ${REVIEW_SERVICE_URL:http://localhost:8089}
           predicates:
             - Path=/reviews/**
         - id: coupon-service
-          uri: http://localhost:8090
+          uri: ${COUPON_SERVICE_URL:http://localhost:8090}
           predicates:
             - Path=/coupons/**
 

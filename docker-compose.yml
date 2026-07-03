@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecomarket
+    ports:
+      - "3306:3306"
+    networks:
+      - ecomarket-network
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  inventory-service:
+    build: ./inventory-service
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "8084:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  store-service:
+    build: ./store-service
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  shipping-service:
+    build: ./shipping-service
+    ports:
+      - "8086:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  supplier-service:
+    build: ./supplier-service
+    ports:
+      - "8087:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  billing-service:
+    build: ./billing-service
+    ports:
+      - "8088:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  review-service:
+    build: ./review-service
+    ports:
+      - "8089:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  coupon-service:
+    build: ./coupon-service
+    ports:
+      - "8090:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql
+    networks:
+      - ecomarket-network
+
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8080
+      - AUTH_SERVICE_URL=http://auth-service:8080
+      - INVENTORY_SERVICE_URL=http://inventory-service:8080
+      - ORDER_SERVICE_URL=http://order-service:8080
+      - STORE_SERVICE_URL=http://store-service:8080
+      - SHIPPING_SERVICE_URL=http://shipping-service:8080
+      - SUPPLIER_SERVICE_URL=http://supplier-service:8080
+      - BILLING_SERVICE_URL=http://billing-service:8080
+      - REVIEW_SERVICE_URL=http://review-service:8080
+      - COUPON_SERVICE_URL=http://coupon-service:8080
+    networks:
+      - ecomarket-network
+
+networks:
+  ecomarket-network:
+    driver: bridge

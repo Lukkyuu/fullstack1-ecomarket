@@ -17,15 +17,11 @@
 						"url": {
 							"raw": "http://localhost:8081/api/users",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8081",
-							"path": [
-								"api",
-								"users"
-							]
-						}
+							"path": ["api", "users"]
+						},
+						"description": "Obtiene la lista de todos los usuarios registrados en el sistema."
 					},
 					"response": []
 				},
@@ -33,12 +29,7 @@
 					"name": "Create User",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"Carlos Rojas\",\n    \"email\": \"carlos.rojas@ecomarket.cl\",\n    \"roleName\": \"SALES_EMPLOYEE\"\n}"
@@ -46,15 +37,11 @@
 						"url": {
 							"raw": "http://localhost:8081/api/users",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8081",
-							"path": [
-								"api",
-								"users"
-							]
-						}
+							"path": ["api", "users"]
+						},
+						"description": "Crea un nuevo usuario en la base de datos."
 					},
 					"response": []
 				}
@@ -71,17 +58,11 @@
 						"url": {
 							"raw": "http://localhost:8082/api/auth/permissions/STORE_MANAGER",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8082",
-							"path": [
-								"api",
-								"auth",
-								"permissions",
-								"STORE_MANAGER"
-							]
-						}
+							"path": ["api", "auth", "permissions", "STORE_MANAGER"]
+						},
+						"description": "Obtiene los permisos asociados a un rol específico (ej. STORE_MANAGER)."
 					},
 					"response": []
 				}
@@ -98,15 +79,11 @@
 						"url": {
 							"raw": "http://localhost:8093/api/products",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8093",
-							"path": [
-								"api",
-								"products"
-							]
-						}
+							"path": ["api", "products"]
+						},
+						"description": "Obtiene el inventario completo de productos."
 					},
 					"response": []
 				},
@@ -118,16 +95,11 @@
 						"url": {
 							"raw": "http://localhost:8093/api/products/1",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8093",
-							"path": [
-								"api",
-								"products",
-								"1"
-							]
-						}
+							"path": ["api", "products", "1"]
+						},
+						"description": "Obtiene los detalles de un producto específico mediante su ID."
 					},
 					"response": []
 				}
@@ -144,15 +116,11 @@
 						"url": {
 							"raw": "http://localhost:8084/api/orders",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8084",
-							"path": [
-								"api",
-								"orders"
-							]
-						}
+							"path": ["api", "orders"]
+						},
+						"description": "Obtiene la lista de todos los pedidos realizados."
 					},
 					"response": []
 				},
@@ -160,12 +128,7 @@
 					"name": "Create Order - Success (with Coupon)",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"couponCode\": \"BIENVENIDA20\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 2\n        },\n        {\n            \"productId\": 3,\n            \"quantity\": 1\n        }\n    ]\n}"
@@ -173,15 +136,11 @@
 						"url": {
 							"raw": "http://localhost:8084/api/orders",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8084",
-							"path": [
-								"api",
-								"orders"
-							]
-						}
+							"path": ["api", "orders"]
+						},
+						"description": "Crea un nuevo pedido aplicando un cupón de descuento."
 					},
 					"response": []
 				},
@@ -189,12 +148,7 @@
 					"name": "Create Order - Stock Error",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"customerName\": \"Lian Eco\",\n    \"customerEmail\": \"lian@ecomarket.cl\",\n    \"shippingAddress\": \"Barrio Lastarria 450, Santiago\",\n    \"items\": [\n        {\n            \"productId\": 1,\n            \"quantity\": 500\n        }\n    ]\n}"
@@ -202,15 +156,11 @@
 						"url": {
 							"raw": "http://localhost:8084/api/orders",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8084",
-							"path": [
-								"api",
-								"orders"
-							]
-						}
+							"path": ["api", "orders"]
+						},
+						"description": "Intenta crear un pedido con un stock que excede el inventario (ejemplo de error)."
 					},
 					"response": []
 				}
@@ -227,15 +177,11 @@
 						"url": {
 							"raw": "http://localhost:8085/api/stores",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8085",
-							"path": [
-								"api",
-								"stores"
-							]
-						}
+							"path": ["api", "stores"]
+						},
+						"description": "Lista todas las sucursales/tiendas disponibles."
 					},
 					"response": []
 				}
@@ -252,15 +198,11 @@
 						"url": {
 							"raw": "http://localhost:8086/api/shipments",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8086",
-							"path": [
-								"api",
-								"shipments"
-							]
-						}
+							"path": ["api", "shipments"]
+						},
+						"description": "Obtiene los despachos y su estado."
 					},
 					"response": []
 				},
@@ -268,12 +210,7 @@
 					"name": "Create Shipment",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"orderId\": 1,\n    \"deliveryAddress\": \"Av. Alemania 1200, Valdivia\"\n}"
@@ -281,15 +218,11 @@
 						"url": {
 							"raw": "http://localhost:8086/api/shipments",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8086",
-							"path": [
-								"api",
-								"shipments"
-							]
-						}
+							"path": ["api", "shipments"]
+						},
+						"description": "Registra un nuevo envío asociado a un pedido."
 					},
 					"response": []
 				}
@@ -306,15 +239,11 @@
 						"url": {
 							"raw": "http://localhost:8087/api/suppliers",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8087",
-							"path": [
-								"api",
-								"suppliers"
-							]
-						}
+							"path": ["api", "suppliers"]
+						},
+						"description": "Lista los proveedores registrados en el sistema."
 					},
 					"response": []
 				}
@@ -331,15 +260,11 @@
 						"url": {
 							"raw": "http://localhost:8088/api/invoices",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8088",
-							"path": [
-								"api",
-								"invoices"
-							]
-						}
+							"path": ["api", "invoices"]
+						},
+						"description": "Obtiene la lista de facturas o boletas emitidas."
 					},
 					"response": []
 				}
@@ -356,15 +281,11 @@
 						"url": {
 							"raw": "http://localhost:8089/api/reviews",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8089",
-							"path": [
-								"api",
-								"reviews"
-							]
-						}
+							"path": ["api", "reviews"]
+						},
+						"description": "Lista todas las reseñas de productos del sistema."
 					},
 					"response": []
 				},
@@ -376,17 +297,11 @@
 						"url": {
 							"raw": "http://localhost:8089/api/reviews/product/1",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8089",
-							"path": [
-								"api",
-								"reviews",
-								"product",
-								"1"
-							]
-						}
+							"path": ["api", "reviews", "product", "1"]
+						},
+						"description": "Obtiene las reseñas asociadas a un producto en específico."
 					},
 					"response": []
 				}
@@ -403,17 +318,11 @@
 						"url": {
 							"raw": "http://localhost:8090/api/coupons/validate/BIENVENIDA20",
 							"protocol": "http",
-							"host": [
-								"localhost"
-							],
+							"host": ["localhost"],
 							"port": "8090",
-							"path": [
-								"api",
-								"coupons",
-								"validate",
-								"BIENVENIDA20"
-							]
-						}
+							"path": ["api", "coupons", "validate", "BIENVENIDA20"]
+						},
+						"description": "Valida si un cupón existe y está activo (ej. BIENVENIDA20)."
 					},
 					"response": []
 				}

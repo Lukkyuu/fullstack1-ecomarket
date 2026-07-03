@@ -1,8 +1,6 @@
 package com.ecomarket.authservice.controller;
 
-import com.ecomarket.authservice.entity.RolePermission;
-import com.ecomarket.authservice.repository.RolePermissionRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.ecomarket.authservice.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,52 +8,35 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
     @Mock
-    private RolePermissionRepository repository;
+    private AuthService service;
 
     @InjectMocks
-    private AuthController authController;
+    private AuthController controller;
 
     @Test
-    void getPermissionsByRole_ReturnsListOfPermissions() {
+    void givenRoleName_whenGetPermissionsByRole_thenReturnPermissionsList() {
         // Given
-        RolePermission perm1 = new RolePermission();
-        perm1.setPermissionKey("READ_USER");
-        RolePermission perm2 = new RolePermission();
-        perm2.setPermissionKey("WRITE_USER");
-        
-        when(repository.findByRoleName("ADMIN")).thenReturn(Arrays.asList(perm1, perm2));
+        String roleName = "ADMIN";
+        when(service.getPermissionsByRole(roleName)).thenReturn(Collections.singletonList("READ_ALL"));
 
         // When
-        ResponseEntity<List<String>> response = authController.getPermissionsByRole("ADMIN");
+        ResponseEntity<List<String>> response = controller.getPermissionsByRole(roleName);
 
         // Then
         assertEquals(200, response.getStatusCode().value());
-        assertEquals(2, response.getBody().size());
-        assertEquals("READ_USER", response.getBody().get(0));
-        assertEquals("WRITE_USER", response.getBody().get(1));
-    }
-    
-    @Test
-    void getPermissionsByRole_ReturnsEmpty_WhenNoRole() {
-        // Given
-        when(repository.findByRoleName(anyString())).thenReturn(Arrays.asList());
-
-        // When
-        ResponseEntity<List<String>> response = authController.getPermissionsByRole("UNKNOWN");
-
-        // Then
-        assertEquals(200, response.getStatusCode().value());
-        assertEquals(0, response.getBody().size());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+        assertEquals("READ_ALL", response.getBody().get(0));
+        verify(service, times(1)).getPermissionsByRole(roleName);
     }
 }

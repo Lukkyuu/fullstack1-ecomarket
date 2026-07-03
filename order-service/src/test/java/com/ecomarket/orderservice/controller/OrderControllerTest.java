@@ -1,59 +1,71 @@
 package com.ecomarket.orderservice.controller;
 
-import com.ecomarket.orderservice.dto.*;
+import com.ecomarket.orderservice.dto.OrderCreateDTO;
+import com.ecomarket.orderservice.dto.OrderResponseDTO;
 import com.ecomarket.orderservice.entity.Order;
-import com.ecomarket.orderservice.repository.OrderRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.ecomarket.orderservice.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderControllerTest {
 
     @Mock
-    private OrderRepository orderRepository;
-
-    @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
-    private WebClient inventoryWebClient;
-
-    @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
-    private WebClient couponWebClient;
-
-    @Mock(answer = org.mockito.Answers.RETURNS_DEEP_STUBS)
-    private WebClient billingWebClient;
+    private OrderService service;
 
     @InjectMocks
-    private OrderController orderController;
+    private OrderController controller;
 
     @Test
-    void getAll_ReturnsOrders() {
+    void givenOrders_whenGetAll_thenReturnOrderList() {
         // Given
         Order order = new Order();
         order.setId(1L);
-        when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
+        when(service.getAllOrders()).thenReturn(Collections.singletonList(order));
 
         // When
-        ResponseEntity<List<Order>> response = orderController.getAll();
+        ResponseEntity<List<Order>> response = controller.getAll();
 
         // Then
         assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
+        verify(service, times(1)).getAllOrders();
+    }
+
+    @Test
+    void givenValidOrderRequest_whenCreateOrder_thenReturnOrderResponse() {
+        // Given
+        OrderCreateDTO dto = new OrderCreateDTO();
+        dto.setCustomerName("John Doe");
+
+        OrderResponseDTO responseDTO = OrderResponseDTO.builder()
+                .id(100L)
+                .customerName("John Doe")
+                .totalAmount(new BigDecimal("500.00"))
+                .build();
+
+        when(service.createOrder(dto)).thenReturn(responseDTO);
+
+        // When
+        ResponseEntity<OrderResponseDTO> response = controller.createOrder(dto);
+
+        // Then
+        assertEquals(201, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(100L, response.getBody().getId());
+        assertEquals("John Doe", response.getBody().getCustomerName());
+        verify(service, times(1)).createOrder(dto);
     }
 }

@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  labels:
+    app: gateway-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+      - name: gateway-service
+        image: ecomarket/gateway-service:latest # This will be replaced by the CI/CD pipeline
+        ports:
+        - containerPort: 8080
+        env:
+        - name: USER_SERVICE_URL
+          value: "http://user-service:8080"
+        - name: AUTH_SERVICE_URL
+          value: "http://auth-service:8080"
+        - name: INVENTORY_SERVICE_URL
+          value: "http://inventory-service:8080"
+        - name: ORDER_SERVICE_URL
+          value: "http://order-service:8080"
+        - name: STORE_SERVICE_URL
+          value: "http://store-service:8080"
+        - name: SHIPPING_SERVICE_URL
+          value: "http://shipping-service:8080"
+        - name: SUPPLIER_SERVICE_URL
+          value: "http://supplier-service:8080"
+        - name: BILLING_SERVICE_URL
+          value: "http://billing-service:8080"
+        - name: REVIEW_SERVICE_URL
+          value: "http://review-service:8080"
+        - name: COUPON_SERVICE_URL
+          value: "http://coupon-service:8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  type: LoadBalancer # Exposes the gateway to the internet using an AWS ELB/ALB
+  selector:
+    app: gateway-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+# Example Deployment for a backend service (e.g. user-service)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: ecomarket/user-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://$(RDS_ENDPOINT)/ecomarket?createDatabaseIfNotExist=true"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "rootpassword123"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  type: ClusterIP # Internal only
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

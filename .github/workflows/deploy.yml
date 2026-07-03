@@ -1,0 +1,67 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-west-2
+  ECS_CLUSTER: ecomarket-cluster
+
+jobs:
+  deploy:
+    name: Build and Deploy Microservices
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - user-service
+          - auth-service
+          - inventory-service
+          - order-service
+          - store-service
+          - shipping-service
+          - supplier-service
+          - billing-service
+          - review-service
+          - coupon-service
+          - gateway-service
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # Needed for academy accounts
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ecomarket/${{ matrix.service }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./${{ matrix.service }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name ecomarket-eks --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to Amazon EKS
+        run: |
+          # Apply the kubernetes manifests
+          kubectl apply -f k8s/
+          # Trigger a rolling update with the new image
+          kubectl set image deployment/${{ matrix.service }} ${{ matrix.service }}=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          kubectl rollout status deployment/${{ matrix.service }}
