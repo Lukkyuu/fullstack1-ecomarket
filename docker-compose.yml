@@ -40,7 +40,7 @@ services:
   inventory-service:
     build: ./inventory-service
     ports:
-      - "8083:8080"
+      - "8091:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/ecomarket?createDatabaseIfNotExist=true
       - SPRING_DATASOURCE_USERNAME=root

@@ -10,41 +10,41 @@ spring:
         - id: user-service
           uri: ${USER_SERVICE_URL:http://localhost:8081}
           predicates:
-            - Path=/users/**
+            - Path=/api/users/**
         - id: auth-service
           uri: ${AUTH_SERVICE_URL:http://localhost:8082}
           predicates:
-            - Path=/auth/**
+            - Path=/api/auth/**
         - id: inventory-service
           uri: ${INVENTORY_SERVICE_URL:http://localhost:8083}
           predicates:
-            - Path=/inventory/**
+            - Path=/api/inventory/**
         - id: order-service
           uri: ${ORDER_SERVICE_URL:http://localhost:8084}
           predicates:
-            - Path=/orders/**
+            - Path=/api/orders/**
         - id: store-service
           uri: ${STORE_SERVICE_URL:http://localhost:8085}
           predicates:
-            - Path=/stores/**
+            - Path=/api/stores/**
         - id: shipping-service
           uri: ${SHIPPING_SERVICE_URL:http://localhost:8086}
           predicates:
-            - Path=/shipping/**
+            - Path=/api/shipping/**
         - id: supplier-service
           uri: ${SUPPLIER_SERVICE_URL:http://localhost:8087}
           predicates:
-            - Path=/suppliers/**
+            - Path=/api/suppliers/**
         - id: billing-service
           uri: ${BILLING_SERVICE_URL:http://localhost:8088}
           predicates:
-            - Path=/billing/**
+            - Path=/api/billing/**
         - id: review-service
           uri: ${REVIEW_SERVICE_URL:http://localhost:8089}
           predicates:
-            - Path=/reviews/**
+            - Path=/api/reviews/**
         - id: coupon-service
           uri: ${COUPON_SERVICE_URL:http://localhost:8090}
           predicates:
-            - Path=/coupons/**
+            - Path=/api/coupons/**
 
